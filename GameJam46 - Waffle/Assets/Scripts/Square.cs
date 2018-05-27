@@ -4,23 +4,27 @@ using UnityEngine;
 
 public class Square : MonoBehaviour {
 
-	public Color hoverColor, startColor, activeColor, selectedColor;
+	public Color hoverColor, startColor, activeColor, selectedColor, enemyColor;
 
-	public bool isActive, hasPiece, isSelected;
+    public bool isActive, hasPiece, hasEnemy, isSelected;
 
 
 	public Piece_Control activePiece;
+    public Enemy enemyPiece;
+    public Piece_Control playerPiece;
 
 
 	GameManager gM;
 	SpriteRenderer sP;
 	Collider2D coll;
+    SFXPlayer sfx;
 
 	// Use this for initialization
 	void Start () {
 		sP = GetComponent<SpriteRenderer>();
 		coll = GetComponent<Collider2D>();
 		gM = FindObjectOfType<GameManager>();
+        sfx = FindObjectOfType<SFXPlayer>();
 
 		sP.material.color = startColor;
 
@@ -38,6 +42,7 @@ public class Square : MonoBehaviour {
 	private void OnMouseExit()
 	{
 		MouseExitColor();
+        sfx.UnDoHasPlayed();
 	}
 
 
@@ -53,32 +58,47 @@ public class Square : MonoBehaviour {
 			{
 				
 				sP.material.color = hoverColor;
+                sfx.PlayHoverSound();
 
 				if (Input.GetMouseButtonDown(0))
 				{
+                    //print("Player Moves Piece");
+                    sfx.PlayMoveSound();
 					activePiece.transform.position = this.transform.position;
 					activePiece.ClearAllSquares();
+                    if (hasEnemy) {
+                        hasEnemy = false;
+                        enemyPiece.GetComponent<Enemy>().enabled = false;
+                        Destroy(enemyPiece.gameObject);
+                        print("Destroy Enemy on " + gameObject.name);
+
+                    }
 
 					Piece_Control[] piece = FindObjectsOfType<Piece_Control>();
 					foreach(Piece_Control optionalPiece in piece){
-						optionalPiece.FindPieceSquares();
+                       
+                        optionalPiece.isActivePiece = false;
 					}
-					gM.isMovingPiece = false;
-					gM.isChoosingPiece = true;
-
-				}
+                    Invoke("StartEnemyTurn", 2.0f);
+                }
 			}
 
 
 		}
 	}
 
-	void ChoosePiece(){
+    void StartEnemyTurn() {
+        gM.EnemyTurn();
+
+    }
+
+	public void ChoosePiece(){
 		if (gM.isChoosingPiece)
 		{
 			if (hasPiece)
 			{
 				sP.material.color = hoverColor;
+                sfx.PlayHoverSound();
 
 				if (Input.GetMouseButtonDown(0))
 				{
@@ -87,6 +107,7 @@ public class Square : MonoBehaviour {
 					coll.enabled = false;
 					sP.material.color = selectedColor;
 					isSelected = true;
+                    sfx.PlayClickSound();
 					Piece_Control[] piece = FindObjectsOfType<Piece_Control>();
 					foreach (Piece_Control optionalPiece in piece)
 					{
@@ -107,7 +128,7 @@ public class Square : MonoBehaviour {
 	void MouseExitColor(){
 		if (gM.isChoosingPiece)
         {
-            if (isActive)
+            if (isActive && !hasEnemy)
             {
                 sP.material.color = activeColor;
             }
@@ -120,6 +141,7 @@ public class Square : MonoBehaviour {
             {
                 sP.material.color = selectedColor;
             }
+
         }
 
         if (gM.isMovingPiece)
@@ -127,6 +149,10 @@ public class Square : MonoBehaviour {
             if (isActive)
             {
                 sP.material.color = activeColor;
+            }
+            if (hasEnemy && isActive)
+            {
+                sP.material.color = enemyColor;
             }
         }
 	}

@@ -53,7 +53,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   optionColor: {r: 0.7924528, g: 0.115877524, b: 0.115877524, a: 1}
+  enemyColor: {r: 1, g: 0.69540036, b: 0, a: 1}
   isActivePiece: 0
+  maxDist: 3
 --- !u!212 &212139201445325306
 SpriteRenderer:
   m_ObjectHideFlags: 1
