@@ -2,42 +2,55 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAI : MonoBehaviour {
+public class EnemyAI : MonoBehaviour
+{
 
-    Enemy[] enemies;
+	Enemy[] enemies;
+	Enemy enemyToMove;
 
-	
 
-    public void EnemyTurn() {
+	public void EnemyTurn()
+	{
 
-        enemies = FindObjectsOfType<Enemy>();
-        //print("There are " + enemies.Length + " left.");
-        if (enemies.Length > 0)
-        {
-            
-            foreach (Enemy e in enemies)
-            {
-                //e.FindPieceSquares();
-            }
+		enemies = FindObjectsOfType<Enemy>();
 
-            int enemyNum = Random.Range(0, enemies.Length);
-            enemies[enemyNum].MoveEnemy();
+		if (enemies.Length > 0)
+		{
+			foreach (Enemy e in enemies)
+			{
+				e.FindPossibleSpaces();
+				if(e.possibleMovemenstWithEnemy.Count > 0){
+					enemyToMove = e;
 
-            foreach (Enemy e in enemies)
-            {
-                //e.ClearAllEnemyPieces();
-            }
+				}             
+			}
 
-            foreach (Enemy e in enemies)
-            {
-                //e.FindPieceSquares();
-            }
 
-        }
+			if(enemyToMove != null){
+				enemyToMove.MoveEnemy();            
+			} else {
+
+				int enemyNum = Random.Range(0, enemies.Length);
+                enemies[enemyNum].MoveEnemy();
+			}
+		}
+
+
+
         else {
-            print("Win!");
-        }
+				print("Win!");
+			}
 
-    }
-	
-}
+
+		enemyToMove = null;
+		foreach (Enemy e in enemies)
+        {
+			e.possibleMovements.Clear();
+			e.possibleMovemenstWithEnemy.Clear();
+            
+        }
+		}
+
+	}
+
+

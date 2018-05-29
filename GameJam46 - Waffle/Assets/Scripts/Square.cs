@@ -16,13 +16,11 @@ public class Square : MonoBehaviour {
 
 	GameManager gM;
 	SpriteRenderer sP;
-	Collider2D coll;
     SFXPlayer sfx;
 
 	// Use this for initialization
 	void Start () {
 		sP = GetComponent<SpriteRenderer>();
-		coll = GetComponent<Collider2D>();
 		gM = FindObjectOfType<GameManager>();
         sfx = FindObjectOfType<SFXPlayer>();
 
@@ -54,6 +52,16 @@ public class Square : MonoBehaviour {
 	void MovePiece(){
 		if (gM.isMovingPiece)
 		{
+
+			if (isSelected)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+					Invoke("RestartPlayerTurn", 0.2f);
+                }
+
+
+            }
 			if (isActive)
 			{
 				
@@ -84,6 +92,8 @@ public class Square : MonoBehaviour {
 			}
 
 
+
+
 		}
 	}
 
@@ -91,6 +101,16 @@ public class Square : MonoBehaviour {
         gM.EnemyTurn();
 
     }
+
+	void RestartPlayerTurn(){
+		sfx.PlayClickSound();
+		Piece_Control[] player = FindObjectsOfType<Piece_Control>();
+		foreach (Piece_Control p in player){
+			p.ClearAllSquares();
+		}
+		gM.PlayerTurn();
+
+	}
 
 	public void ChoosePiece(){
 		if (gM.isChoosingPiece)
@@ -102,10 +122,8 @@ public class Square : MonoBehaviour {
 
 				if (Input.GetMouseButtonDown(0))
 				{
-					gM.isChoosingPiece = false;
-					gM.isMovingPiece = true;
-					coll.enabled = false;
-					sP.material.color = selectedColor;
+					Invoke("ChangeModes", 0.1f);
+					sP.material.color = hoverColor;
 					isSelected = true;
                     sfx.PlayClickSound();
 					Piece_Control[] piece = FindObjectsOfType<Piece_Control>();
@@ -121,6 +139,12 @@ public class Square : MonoBehaviour {
 			}
 		}
 
+	}
+
+	void ChangeModes(){
+
+		gM.isChoosingPiece = false;
+        gM.isMovingPiece = true;
 	}
 
 

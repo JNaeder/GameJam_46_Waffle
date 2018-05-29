@@ -11,28 +11,36 @@ public class Piece_Control : MonoBehaviour {
 	public bool isActivePiece;
 	public static Piece_Control activePiece;
     public int maxDist;
-    
+	public bool isStraight, isDiagonal;
 
-	// Use this for initialization
-	void Start()
+
+	public void FindPossibleMoves2()
 	{
-
+		if (isStraight)
+		{
+			Straight();
+		}
+		if (isDiagonal)
+		{
+			Diagonal();
+		}
 	}
-    
 
-
-	public void FindPossibleMoves2(){
-
-		if(isActivePiece){
-			squares = FindObjectsOfType<Square>();
-			int yUpNum = 2;
+	void Straight(){
+		if (isActivePiece)
+        {
+            squares = FindObjectsOfType<Square>();
+            int yUpNum = 2;
             int yDownNum = 2;
             int xUpNum = 2;
             int xDownNum = 2;
 
-			for (int i = 0; i < squares.Length; i++){
-				if(squares[i].transform.position.y == transform.position.y + yUpNum && squares[i].transform.position.x == transform.position.x){
-                    if (yUpNum >= (maxDist + 1) * 2) {
+            for (int i = 0; i < squares.Length; i++)
+            {
+                if (squares[i].transform.position.y == transform.position.y + yUpNum && squares[i].transform.position.x == transform.position.x)
+                {
+                    if (yUpNum >= (maxDist + 1) * 2)
+                    {
                         break;
                     }
                     if (squares[i].hasPiece == true)
@@ -47,7 +55,7 @@ public class Piece_Control : MonoBehaviour {
                         squares[i].activePiece = this;
                         break;
                     }
-                    else if(squares[i].hasPiece == false)
+                    else if (squares[i].hasPiece == false)
                     {
                         squares[i].isActive = true;
                         SpriteRenderer squareSP = squares[i].GetComponent<SpriteRenderer>();
@@ -56,10 +64,10 @@ public class Piece_Control : MonoBehaviour {
                         yUpNum += 2;
                         i = 0;
                     }
-				}
+                }
 
-			}
-			for (int i = 0; i < squares.Length; i++)
+            }
+            for (int i = 0; i < squares.Length; i++)
             {
                 if (squares[i].transform.position.y == transform.position.y - yDownNum && squares[i].transform.position.x == transform.position.x)
                 {
@@ -92,7 +100,7 @@ public class Piece_Control : MonoBehaviour {
                 }
 
             }
-			for (int i = 0; i < squares.Length; i++)
+            for (int i = 0; i < squares.Length; i++)
             {
                 if (squares[i].transform.position.x == transform.position.x + xUpNum && squares[i].transform.position.y == transform.position.y)
                 {
@@ -124,7 +132,7 @@ public class Piece_Control : MonoBehaviour {
                 }
 
             }
-			for (int i = 0; i < squares.Length; i++)
+            for (int i = 0; i < squares.Length; i++)
             {
                 if (squares[i].transform.position.x == transform.position.x - xDownNum && squares[i].transform.position.y == transform.position.y)
                 {
@@ -160,13 +168,154 @@ public class Piece_Control : MonoBehaviour {
 
 
 
-			}
+        }
+	}
+
+	void Diagonal(){
+		if (isActivePiece)
+        {
+            squares = FindObjectsOfType<Square>();
+            int yUpNum = 2;
+            int yDownNum = 2;
+            int xUpNum = 2;
+            int xDownNum = 2;
+
+            for (int i = 0; i < squares.Length; i++)
+            {
+				if (squares[i].transform.position.y == transform.position.y + yUpNum && squares[i].transform.position.x == transform.position.x + yUpNum)
+                {
+                    if (yUpNum >= (maxDist + 1) * 2)
+                    {
+                        break;
+                    }
+                    if (squares[i].hasPiece == true)
+                    {
+                        break;
+                    }
+                    if (squares[i].hasEnemy == true)
+                    {
+                        SpriteRenderer squareSP = squares[i].GetComponent<SpriteRenderer>();
+                        squareSP.material.color = enemyColor;
+                        squares[i].isActive = true;
+                        squares[i].activePiece = this;
+                        break;
+                    }
+                    else if (squares[i].hasPiece == false)
+                    {
+                        squares[i].isActive = true;
+                        SpriteRenderer squareSP = squares[i].GetComponent<SpriteRenderer>();
+                        squareSP.material.color = optionColor;
+                        squares[i].activePiece = this;
+                        yUpNum += 2;
+                        i = 0;
+                    }
+                }
+
+            }
+            for (int i = 0; i < squares.Length; i++)
+            {
+				if (squares[i].transform.position.y == transform.position.y - yDownNum && squares[i].transform.position.x == transform.position.x - yDownNum)
+                {
+                    if (yDownNum >= (maxDist + 1) * 2)
+                    {
+                        break;
+                    }
+                    if (squares[i].hasPiece == true)
+                    {
+                        break;
+                    }
+                    if (squares[i].hasEnemy == true)
+                    {
+                        SpriteRenderer squareSP = squares[i].GetComponent<SpriteRenderer>();
+                        squareSP.material.color = enemyColor;
+                        squares[i].isActive = true;
+                        squares[i].activePiece = this;
+
+                        break;
+                    }
+                    else if (squares[i].hasPiece == false)
+                    {
+                        squares[i].isActive = true;
+                        SpriteRenderer squareSP = squares[i].GetComponent<SpriteRenderer>();
+                        squareSP.material.color = optionColor;
+                        squares[i].activePiece = this;
+                        yDownNum += 2;
+                        i = 0;
+                    }
+                }
+
+            }
+            for (int i = 0; i < squares.Length; i++)
+            {
+				if (squares[i].transform.position.x == transform.position.x + xUpNum && squares[i].transform.position.y == transform.position.y - xUpNum)
+                {
+                    if (xUpNum >= (maxDist + 1) * 2)
+                    {
+                        break;
+                    }
+                    if (squares[i].hasPiece == true)
+                    {
+                        break;
+                    }
+                    if (squares[i].hasEnemy == true)
+                    {
+                        SpriteRenderer squareSP = squares[i].GetComponent<SpriteRenderer>();
+                        squareSP.material.color = enemyColor;
+                        squares[i].isActive = true;
+                        squares[i].activePiece = this;
+                        break;
+                    }
+                    else if (squares[i].hasPiece == false)
+                    {
+                        squares[i].isActive = true;
+                        SpriteRenderer squareSP = squares[i].GetComponent<SpriteRenderer>();
+                        squareSP.material.color = optionColor;
+                        squares[i].activePiece = this;
+                        xUpNum += 2;
+                        i = 0;
+                    }
+                }
+
+            }
+            for (int i = 0; i < squares.Length; i++)
+            {
+				if (squares[i].transform.position.x == transform.position.x - xDownNum && squares[i].transform.position.y == transform.position.y + xDownNum)
+                {
+                    if (xDownNum >= (maxDist + 1) * 2)
+                    {
+                        break;
+                    }
+                    if (squares[i].hasPiece == true)
+                    {
+                        break;
+                    }
+                    if (squares[i].hasEnemy == true)
+                    {
+                        SpriteRenderer squareSP = squares[i].GetComponent<SpriteRenderer>();
+                        squareSP.material.color = enemyColor;
+                        squares[i].isActive = true;
+                        squares[i].activePiece = this;
+                        break;
+                    }
+                    else if (squares[i].hasPiece == false)
+                    {
+                        squares[i].isActive = true;
+                        SpriteRenderer squareSP = squares[i].GetComponent<SpriteRenderer>();
+                        squareSP.material.color = optionColor;
+                        squares[i].activePiece = this;
+                        xDownNum += 2;
+                        i = 0;
+                    }
+                }
+
+            }
 
 
 
 
+        }
+	}
 
-		}
 
 
 
@@ -188,6 +337,7 @@ public class Piece_Control : MonoBehaviour {
 	}
     
 	public void ClearAllSquares(){
+		squares = FindObjectsOfType<Square>();
 		foreach(Square optionSqaure in squares){
 			optionSqaure.isActive = false;
 			//optionSqaure.hasPiece = false;

@@ -11,9 +11,10 @@ public class Enemy : MonoBehaviour {
     SFXPlayer sfx;
 
     public float maxDist;
+	public bool isStraight, isDiagonal;
 
-    List<Vector3> possibleMovements;
-    List<Vector3> possibleMovemenstWithEnemy;
+    public List<Vector3> possibleMovements;
+    public List<Vector3> possibleMovemenstWithEnemy;
 
 	// Use this for initialization
 	void Start () {
@@ -92,7 +93,7 @@ public class Enemy : MonoBehaviour {
            // print(possibleMovemenstWithEnemy.Count);
            
 
-            print(gameObject.name + " Attacks on " + sqaureWithPlayer + " From " + thisSquare);
+			print(gameObject.name + " Attacks on " + sqaureWithPlayer + " From " + thisSquare + " with a possible " + possibleMovemenstWithEnemy.Count + " moves with enemy");
 
             if (sqaureWithPlayer.playerPiece != null)
             {
@@ -107,6 +108,12 @@ public class Enemy : MonoBehaviour {
             int randSpace = Random.Range(0, possibleMovemenstWithEnemy.Count);
             transPos = possibleMovemenstWithEnemy[randSpace];
             transform.position = transPos;
+
+
+			GameManager.turnNum++;
+            Invoke("StartPlayerTurn", 0.5f);
+            possibleMovemenstWithEnemy.Clear();
+            possibleMovements.Clear();
             
 
         }
@@ -115,7 +122,9 @@ public class Enemy : MonoBehaviour {
         //Can't Find Any Posisble Moves Look again
         else if (possibleMovements.Count == 0)
         {
-           // print("Find Again");
+            //print("Find Enemy Again");
+			possibleMovemenstWithEnemy.Clear();
+            possibleMovements.Clear();
             eAI.EnemyTurn();
         }
 
@@ -126,15 +135,19 @@ public class Enemy : MonoBehaviour {
             transPos = possibleMovements[randSpace];
             transform.position = transPos;
             print(gameObject.name + " Moves from " + thisSquare + " to " + possibleMovements[randSpace] + " from a possible " + possibleMovements.Count + " Moves");
-            
+
+
+			GameManager.turnNum++;
+			Invoke("StartPlayerTurn", 0.5f);
+            possibleMovemenstWithEnemy.Clear();
+            possibleMovements.Clear();
         }
 
-        GameManager.turnNum++;
-        Invoke("StartPlayerTurn", 0.5f);
-        possibleMovemenstWithEnemy.Clear();
-        possibleMovements.Clear();
+       
 
     }
+
+    
 
     void StartPlayerTurn() {
         sqaureWithPlayer = null;
@@ -143,149 +156,301 @@ public class Enemy : MonoBehaviour {
     }
 
 
-    void FindPossibleSpaces() {
+    public void FindPossibleSpaces() {
 
-        
-            squares = FindObjectsOfType<Square>();
-            int yUpNum = 2;
-            int yDownNum = 2;
-            int xUpNum = 2;
-            int xDownNum = 2;
+		if(isStraight){
+			Straight();
 
-            for (int i = 0; i < squares.Length; i++)
-            {
+		}
+		if(isDiagonal){
+			Diagonal();
+		}
+          
+
+
+        }
+
+	void Straight(){
+		squares = FindObjectsOfType<Square>();
+        int yUpNum = 2;
+        int yDownNum = 2;
+        int xUpNum = 2;
+        int xDownNum = 2;
+
+        for (int i = 0; i < squares.Length; i++)
+        {
             // Looking for Pieces Up
             if (squares[i].transform.position.y == transform.position.y + yUpNum && squares[i].transform.position.x == transform.position.x)
+            {
+                // print(squares[i].gameObject.name  + " " + squares[i].hasEnemy);
+                if (yUpNum >= (maxDist + 1) * 2)
                 {
-               // print(squares[i].gameObject.name  + " " + squares[i].hasEnemy);
-                    if (yUpNum >= (maxDist + 1) * 2)
-                    {
                     break;
-                    }
-                    if (squares[i].hasPiece == true)
-                    {
+                }
+                if (squares[i].hasPiece == true)
+                {
                     //Add to list of possible movements, and has enemy, make priority for movement
 
                     possibleMovemenstWithEnemy.Add(squares[i].transform.position);
                     sqaureWithPlayer = squares[i];
                     break;
-                    }
-                    if (squares[i].hasEnemy == true)
-                    {
+                }
+                if (squares[i].hasEnemy == true)
+                {
                     break;
-                    }
-                    else 
-                    {
+                }
+                else
+                {
                     //Add to list of possible, low priority
                     possibleMovements.Add(squares[i].transform.position);
                     yUpNum += 2;
                     i = 0;
-                    }
                 }
-
             }
-            for (int i = 0; i < squares.Length; i++)
-            {
+
+        }
+        for (int i = 0; i < squares.Length; i++)
+        {
             // Looking for Pieces Down
             if (squares[i].transform.position.y == transform.position.y - yDownNum && squares[i].transform.position.x == transform.position.x)
-                {
-               // print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
+            {
+                // print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
                 if (yDownNum >= (maxDist + 1) * 2)
-                    {
-                        break;
-                    }
-                    if (squares[i].hasPiece == true)
-                     {
+                {
+                    break;
+                }
+                if (squares[i].hasPiece == true)
+                {
                     //Add to list of possible movements, and has enemy, make priority for movement
                     possibleMovemenstWithEnemy.Add(squares[i].transform.position);
                     sqaureWithPlayer = squares[i];
                     break;
-                    }
-                    if (squares[i].hasEnemy == true)
-                    {
+                }
+                if (squares[i].hasEnemy == true)
+                {
 
-                         break;
-                    }
-                    else 
-                    {
+                    break;
+                }
+                else
+                {
                     //Add to list of possible, low priority
                     possibleMovements.Add(squares[i].transform.position);
                     yDownNum += 2;
                     i = 0;
-                    }
                 }
-
             }
-            for (int i = 0; i < squares.Length; i++)
-            {
-                // Looking for Pieces Right
+
+        }
+        for (int i = 0; i < squares.Length; i++)
+        {
+            // Looking for Pieces Right
             if (squares[i].transform.position.x == transform.position.x + xUpNum && squares[i].transform.position.y == transform.position.y)
-                {
+            {
                 if (xUpNum >= (maxDist + 1) * 2)
                 {
                     break;
                 }
                 //print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
-                if (squares[i].hasPiece == true) {
+                if (squares[i].hasPiece == true)
+                {
                     possibleMovemenstWithEnemy.Add(squares[i].transform.position);
                     sqaureWithPlayer = squares[i];
                     break;
 
                 }
-                
+
                 if (squares[i].hasEnemy == true)
                 {
 
                     break;
                 }
 
-                else 
-                    {
+                else
+                {
                     //Add to list of possible, low priority
                     possibleMovements.Add(squares[i].transform.position);
                     xUpNum += 2;
                     i = 0;
-                    }
-                   
                 }
 
             }
-            for (int i = 0; i < squares.Length; i++)
-            {
-                 // Looking for Pieces Left
+
+        }
+        for (int i = 0; i < squares.Length; i++)
+        {
+            // Looking for Pieces Left
             if (squares[i].transform.position.x == transform.position.x - xDownNum && squares[i].transform.position.y == transform.position.y)
-                {
+            {
                 //print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
                 if (xDownNum >= (maxDist + 1) * 2)
-                    {
-                        break;
-                    }
-                    if (squares[i].hasPiece == true)
+                {
+                    break;
+                }
+                if (squares[i].hasPiece == true)
                 {
                     //Add to list of possible movements, and has enemy, make priority for movement
                     possibleMovemenstWithEnemy.Add(squares[i].transform.position);
                     sqaureWithPlayer = squares[i];
                     break;
-                    }
-                    if (squares[i].hasEnemy == true)
-                    {
-                             break;
-                    }
-                    else 
-                    {
+                }
+                if (squares[i].hasEnemy == true)
+                {
+                    break;
+                }
+                else
+                {
                     //Add to list of possible, low priority
                     possibleMovements.Add(squares[i].transform.position);
                     xDownNum += 2;
                     i = 0;
-                    }
+                }
+            }
+
+        }
+	}
+
+	void Diagonal(){
+
+		squares = FindObjectsOfType<Square>();
+        int yUpNum = 2;
+        int yDownNum = 2;
+        int xUpNum = 2;
+        int xDownNum = 2;
+
+        for (int i = 0; i < squares.Length; i++)
+        {
+            // Looking for Pieces Up
+			if (squares[i].transform.position.y == transform.position.y + yUpNum && squares[i].transform.position.x == transform.position.x + yUpNum)
+            {
+                // print(squares[i].gameObject.name  + " " + squares[i].hasEnemy);
+                if (yUpNum >= (maxDist + 1) * 2)
+                {
+                    break;
+                }
+                if (squares[i].hasPiece == true)
+                {
+                    //Add to list of possible movements, and has enemy, make priority for movement
+
+                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                    sqaureWithPlayer = squares[i];
+                    break;
+                }
+                if (squares[i].hasEnemy == true)
+                {
+                    break;
+                }
+                else
+                {
+                    //Add to list of possible, low priority
+                    possibleMovements.Add(squares[i].transform.position);
+                    yUpNum += 2;
+                    i = 0;
+                }
+            }
+
+        }
+        for (int i = 0; i < squares.Length; i++)
+        {
+            // Looking for Pieces Down
+			if (squares[i].transform.position.y == transform.position.y - yDownNum && squares[i].transform.position.x == transform.position.x - yDownNum)
+            {
+                // print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
+                if (yDownNum >= (maxDist + 1) * 2)
+                {
+                    break;
+                }
+                if (squares[i].hasPiece == true)
+                {
+                    //Add to list of possible movements, and has enemy, make priority for movement
+                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                    sqaureWithPlayer = squares[i];
+                    break;
+                }
+                if (squares[i].hasEnemy == true)
+                {
+
+                    break;
+                }
+                else
+                {
+                    //Add to list of possible, low priority
+                    possibleMovements.Add(squares[i].transform.position);
+                    yDownNum += 2;
+                    i = 0;
+                }
+            }
+
+        }
+        for (int i = 0; i < squares.Length; i++)
+        {
+            // Looking for Pieces Right
+			if (squares[i].transform.position.x == transform.position.x + xUpNum && squares[i].transform.position.y == transform.position.y - xUpNum)
+            {
+                if (xUpNum >= (maxDist + 1) * 2)
+                {
+                    break;
+                }
+                //print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
+                if (squares[i].hasPiece == true)
+                {
+                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                    sqaureWithPlayer = squares[i];
+                    break;
+
+                }
+
+                if (squares[i].hasEnemy == true)
+                {
+
+                    break;
+                }
+
+                else
+                {
+                    //Add to list of possible, low priority
+                    possibleMovements.Add(squares[i].transform.position);
+                    xUpNum += 2;
+                    i = 0;
                 }
 
             }
 
-
-
+        }
+        for (int i = 0; i < squares.Length; i++)
+        {
+            // Looking for Pieces Left
+			if (squares[i].transform.position.x == transform.position.x - xDownNum && squares[i].transform.position.y == transform.position.y + xDownNum)
+            {
+                //print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
+                if (xDownNum >= (maxDist + 1) * 2)
+                {
+                    break;
+                }
+                if (squares[i].hasPiece == true)
+                {
+                    //Add to list of possible movements, and has enemy, make priority for movement
+                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                    sqaureWithPlayer = squares[i];
+                    break;
+                }
+                if (squares[i].hasEnemy == true)
+                {
+                    break;
+                }
+                else
+                {
+                    //Add to list of possible, low priority
+                    possibleMovements.Add(squares[i].transform.position);
+                    xDownNum += 2;
+                    i = 0;
+                }
+            }
 
         }
+
+
+
+	}
 
 
     

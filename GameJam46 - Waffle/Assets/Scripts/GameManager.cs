@@ -1,14 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
 
 	public bool isChoosingPiece, isMovingPiece;
     public static int turnNum;
+	public Text turnNumText;
 
     EnemyAI eAI;
+
+
 
 	// Use this for initialization
 	void Start () {
@@ -18,24 +22,17 @@ public class GameManager : MonoBehaviour {
         PlayerTurn();
 	}
 
+	private void Update()
+	{
+		turnNumText.text = "Turn: " + turnNum.ToString();
+	}
 
-    public void PlayerTurn() {
+
+	public void PlayerTurn() {
         //print("It is Player Turn number " + turnNum);
-        isChoosingPiece = true;
-        isMovingPiece = false;
         ClearEverythingAndLookForEverything();
+		Invoke("ResetIsChoosing", 0.5f);
 
-
-       // Square[] squares = FindObjectsOfType<Square>();
-       // foreach (Square s in squares) {
-            //s.hasPiece = false;
-       // }
-
-
-       // Piece_Control[] pieces = FindObjectsOfType<Piece_Control>();
-        //for (int i = 0; i < pieces.Length; i++) {
-            //pieces[i].FindPieceSquares();
-        //}
         
 
         
@@ -46,10 +43,14 @@ public class GameManager : MonoBehaviour {
         //print("It is enemy turn number " + turnNum);
         ClearEverythingAndLookForEverything();
         eAI.EnemyTurn();
-        isChoosingPiece = true;
-        isMovingPiece = false;
         
     }
+
+	void ResetIsChoosing(){
+		isChoosingPiece = true;
+        isMovingPiece = false;
+
+	}
 
 
     public void ClearEverythingAndLookForEverything() {
