@@ -6,7 +6,7 @@ public class SFXPlayer : MonoBehaviour {
 
     AudioSource aS;
 
-    public AudioClip hoverSound, clickSound, moveSound;
+    public AudioClip hoverSound, clickSound, moveSound, enemyMoveSound;
     bool hasPlayed;
 
 	// Use this for initialization
@@ -34,6 +34,11 @@ public class SFXPlayer : MonoBehaviour {
         aS.clip = moveSound;
         aS.Play();
 
+    }
+
+    public void PlayEnemeyMoveSound() {
+        aS.clip = enemyMoveSound;
+        aS.Play();
     }
 
     public void UnDoHasPlayed() {

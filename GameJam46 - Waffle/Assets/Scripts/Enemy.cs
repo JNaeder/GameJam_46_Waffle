@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour {
     GameManager gM;
     EnemyAI eAI;
     Square sqaureWithPlayer, thisSquare;
+    SFXPlayer sfx;
 
     public float maxDist;
 
@@ -20,6 +21,7 @@ public class Enemy : MonoBehaviour {
         eAI = FindObjectOfType<EnemyAI>();
         possibleMovements = new List<Vector3>();
         possibleMovemenstWithEnemy = new List<Vector3>();
+        sfx = FindObjectOfType<SFXPlayer>();
 
 
         FindPieceSquares();
@@ -67,58 +69,75 @@ public class Enemy : MonoBehaviour {
 
     public void MoveEnemy()
     {
-        
+        //print("Enemy Moves");
+        sfx.PlayEnemeyMoveSound();
+
+        //Find The Square The Piece Started On
+        Square[] squares = FindObjectsOfType<Square>();
+        for (int i = 0; i < squares.Length; i++)
+        {
+            if (squares[i].transform.position == transform.position)
+            {
+                thisSquare = squares[i];
+            }
+        }
+
+
         Vector3 transPos = transform.position;
         FindPossibleSpaces();
-        if (possibleMovemenstWithEnemy.Count != 0) {
-            sqaureWithPlayer.hasPiece = false;
-            
-            Square[] squares = FindObjectsOfType<Square>();
-            for (int i = 0; i < squares.Length; i++) {
-                if (squares[i].transform.position == transform.position)
-                {
-                    thisSquare = squares[i];
-                }
-            }
 
+
+        if (possibleMovemenstWithEnemy.Count != 0) {
+            //sqaureWithPlayer.hasPiece = false;
+           // print(possibleMovemenstWithEnemy.Count);
+           
 
             print(gameObject.name + " Attacks on " + sqaureWithPlayer + " From " + thisSquare);
+
             if (sqaureWithPlayer.playerPiece != null)
             {
                 Destroy(sqaureWithPlayer.playerPiece.gameObject);
             } else
             {
-                eAI.EnemyTurn();
+                //eAI.EnemyTurn();
+                print("Weird Thing Happened " + sqaureWithPlayer);
             }
+
+            //Move The Piece
             int randSpace = Random.Range(0, possibleMovemenstWithEnemy.Count);
             transPos = possibleMovemenstWithEnemy[randSpace];
             transform.position = transPos;
-            possibleMovements.Clear();
-            GameManager.turnNum++;
-            Invoke("StartPlayerTurn", 0.5f);
+            
 
         }
 
 
-
+        //Can't Find Any Posisble Moves Look again
         else if (possibleMovements.Count == 0)
         {
            // print("Find Again");
             eAI.EnemyTurn();
         }
+
+        //Move Piece Without Attacking
         else {
             //print("Possible Movements " + possibleMovements.Count + " for " + gameObject.name);
             int randSpace = Random.Range(0, possibleMovements.Count);
             transPos = possibleMovements[randSpace];
             transform.position = transPos;
-            possibleMovements.Clear();
-            GameManager.turnNum++;
-            Invoke("StartPlayerTurn", 0.5f);
+            print(gameObject.name + " Moves from " + thisSquare + " to " + possibleMovements[randSpace] + " from a possible " + possibleMovements.Count + " Moves");
+            
         }
-        
+
+        GameManager.turnNum++;
+        Invoke("StartPlayerTurn", 0.5f);
+        possibleMovemenstWithEnemy.Clear();
+        possibleMovements.Clear();
+
     }
 
     void StartPlayerTurn() {
+        sqaureWithPlayer = null;
         gM.PlayerTurn();
 
     }
@@ -187,7 +206,7 @@ public class Enemy : MonoBehaviour {
 
                          break;
                     }
-                    else if (squares[i].hasPiece == false)
+                    else 
                     {
                     //Add to list of possible, low priority
                     possibleMovements.Add(squares[i].transform.position);
@@ -202,6 +221,10 @@ public class Enemy : MonoBehaviour {
                 // Looking for Pieces Right
             if (squares[i].transform.position.x == transform.position.x + xUpNum && squares[i].transform.position.y == transform.position.y)
                 {
+                if (xUpNum >= (maxDist + 1) * 2)
+                {
+                    break;
+                }
                 //print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
                 if (squares[i].hasPiece == true) {
                     possibleMovemenstWithEnemy.Add(squares[i].transform.position);
@@ -209,17 +232,14 @@ public class Enemy : MonoBehaviour {
                     break;
 
                 }
-                if (xUpNum >= (maxDist + 1) * 2)
-                {
-                    break;
-                }
+                
                 if (squares[i].hasEnemy == true)
                 {
 
                     break;
                 }
 
-                else if (squares[i].hasPiece == false)
+                else 
                     {
                     //Add to list of possible, low priority
                     possibleMovements.Add(squares[i].transform.position);
@@ -251,7 +271,7 @@ public class Enemy : MonoBehaviour {
                     {
                              break;
                     }
-                    else if (squares[i].hasPiece == false)
+                    else 
                     {
                     //Add to list of possible, low priority
                     possibleMovements.Add(squares[i].transform.position);
