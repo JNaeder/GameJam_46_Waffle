@@ -12,6 +12,7 @@ public class Piece_Control : MonoBehaviour {
 	public static Piece_Control activePiece;
     public int maxDist;
 	public bool isStraight, isDiagonal;
+	public int weight;
 
 
 	public void FindPossibleMoves2()

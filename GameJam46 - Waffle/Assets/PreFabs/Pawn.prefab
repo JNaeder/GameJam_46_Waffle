@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 95408210076217062}
   m_Layer: 0
   m_Name: Pawn
-  m_TagString: Untagged
+  m_TagString: Pawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -137,6 +137,7 @@ MonoBehaviour:
   maxDist: 2
   isStraight: 1
   isDiagonal: 0
+  weight: 1
 --- !u!212 &212139201445325306
 SpriteRenderer:
   m_ObjectHideFlags: 1

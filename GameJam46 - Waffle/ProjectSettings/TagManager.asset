@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Square
+  - Pawn
+  - Bishop
+  - Rook
+  - King
   layers:
   - Default
   - TransparentFX

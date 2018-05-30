@@ -7,14 +7,20 @@ public class Enemy : MonoBehaviour {
     Square[] squares;
     GameManager gM;
     EnemyAI eAI;
-    Square sqaureWithPlayer, thisSquare;
+    Square  thisSquare;
     SFXPlayer sfx;
+	Vector3 transPos;
 
     public float maxDist;
 	public bool isStraight, isDiagonal;
+	public int weight;
 
     public List<Vector3> possibleMovements;
     public List<Vector3> possibleMovemenstWithEnemy;
+	public List<Vector3> possibleMovementsWithBishop;
+	public List<Vector3> possibleMovementsWithRook;
+	public List<Vector3> possibleMovementsWithKing;
+	public Square sqaureWithPlayer, squareWithBishop, squareWithRook, squareWithKing;
 
 	// Use this for initialization
 	void Start () {
@@ -58,7 +64,6 @@ public class Enemy : MonoBehaviour {
         squares = FindObjectsOfType<Square>();
         foreach (Square s in squares) {
             s.enemyPiece = null;
-            //s.hasPiece = false;
             s.hasEnemy = false;
             s.playerPiece = null;
         }
@@ -82,39 +87,22 @@ public class Enemy : MonoBehaviour {
                 thisSquare = squares[i];
             }
         }
+        
 
+        transPos = transform.position;
+		if(possibleMovementsWithKing.Count != 0){
+			AttackKing();
+		} 
+		    else if(possibleMovementsWithRook.Count != 0){
+			AttackRook();
+		}
+		    else if(possibleMovementsWithBishop.Count!= 0){
 
-        Vector3 transPos = transform.position;
-
-
-        if (possibleMovemenstWithEnemy.Count != 0) {
-            //sqaureWithPlayer.hasPiece = false;
-           // print(possibleMovemenstWithEnemy.Count);
-           
-
-			print(gameObject.name + " Attacks on " + sqaureWithPlayer + " From " + thisSquare + " with a possible " + possibleMovemenstWithEnemy.Count + " moves with enemy");
-
-            if (sqaureWithPlayer.playerPiece != null)
-            {
-                Destroy(sqaureWithPlayer.playerPiece.gameObject);
-            } else
-            {
-                //eAI.EnemyTurn();
-                print("Weird Thing Happened " + sqaureWithPlayer);
-            }
-
-            //Move The Piece
-            int randSpace = Random.Range(0, possibleMovemenstWithEnemy.Count);
-            transPos = possibleMovemenstWithEnemy[randSpace];
-            transform.position = transPos;
-
-
-			GameManager.turnNum++;
-            Invoke("StartPlayerTurn", 0.5f);
-            possibleMovemenstWithEnemy.Clear();
-            possibleMovements.Clear();
-            
-
+			AttackBishop();
+		}
+        
+            else if (possibleMovemenstWithEnemy.Count != 0) {
+			AttackPawn();
         }
 
 
@@ -188,11 +176,35 @@ public class Enemy : MonoBehaviour {
                 }
                 if (squares[i].hasPiece == true)
                 {
-                    //Add to list of possible movements, and has enemy, make priority for movement
+					//Add to list of possible movements, and has enemy, make priority for movement
+					if (squares[i].playerPiece.gameObject.tag == "King")
+                    {
+                        possibleMovementsWithKing.Add(squares[i].transform.position);
+                        squareWithKing = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Rook")
+                    {
+                        possibleMovementsWithRook.Add(squares[i].transform.position);
+						squareWithRook = squares[i];
+                        break;
+                    }
 
-                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
-                    sqaureWithPlayer = squares[i];
-                    break;
+
+                    else if (squares[i].playerPiece.gameObject.tag == "Bishop")
+                    {
+                        possibleMovementsWithBishop.Add(squares[i].transform.position);
+                        squareWithBishop = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Pawn")
+                    {
+                        possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                        sqaureWithPlayer = squares[i];
+                        break;
+                    }
+
+
                 }
                 if (squares[i].hasEnemy == true)
                 {
@@ -222,9 +234,32 @@ public class Enemy : MonoBehaviour {
                 if (squares[i].hasPiece == true)
                 {
                     //Add to list of possible movements, and has enemy, make priority for movement
-                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
-                    sqaureWithPlayer = squares[i];
-                    break;
+					if (squares[i].playerPiece.gameObject.tag == "King")
+                    {
+                        possibleMovementsWithKing.Add(squares[i].transform.position);
+                        squareWithKing = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Rook")
+                    {
+                        possibleMovementsWithRook.Add(squares[i].transform.position);
+                        squareWithRook = squares[i];
+                        break;
+                    }
+
+
+                    else if (squares[i].playerPiece.gameObject.tag == "Bishop")
+                    {
+                        possibleMovementsWithBishop.Add(squares[i].transform.position);
+                        squareWithBishop = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Pawn")
+                    {
+                        possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                        sqaureWithPlayer = squares[i];
+                        break;
+                    }
                 }
                 if (squares[i].hasEnemy == true)
                 {
@@ -254,9 +289,32 @@ public class Enemy : MonoBehaviour {
                 //print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
                 if (squares[i].hasPiece == true)
                 {
-                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
-                    sqaureWithPlayer = squares[i];
-                    break;
+					if (squares[i].playerPiece.gameObject.tag == "King")
+                    {
+                        possibleMovementsWithKing.Add(squares[i].transform.position);
+                        squareWithKing = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Rook")
+                    {
+                        possibleMovementsWithRook.Add(squares[i].transform.position);
+                        squareWithRook = squares[i];
+                        break;
+                    }
+
+
+                    else if (squares[i].playerPiece.gameObject.tag == "Bishop")
+                    {
+                        possibleMovementsWithBishop.Add(squares[i].transform.position);
+                        squareWithBishop = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Pawn")
+                    {
+                        possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                        sqaureWithPlayer = squares[i];
+                        break;
+                    }
 
                 }
 
@@ -291,9 +349,32 @@ public class Enemy : MonoBehaviour {
                 if (squares[i].hasPiece == true)
                 {
                     //Add to list of possible movements, and has enemy, make priority for movement
-                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
-                    sqaureWithPlayer = squares[i];
-                    break;
+					if (squares[i].playerPiece.gameObject.tag == "King")
+                    {
+                        possibleMovementsWithKing.Add(squares[i].transform.position);
+                        squareWithKing = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Rook")
+                    {
+                        possibleMovementsWithRook.Add(squares[i].transform.position);
+                        squareWithRook = squares[i];
+                        break;
+                    }
+
+
+                    else if (squares[i].playerPiece.gameObject.tag == "Bishop")
+                    {
+                        possibleMovementsWithBishop.Add(squares[i].transform.position);
+                        squareWithBishop = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Pawn")
+                    {
+                        possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                        sqaureWithPlayer = squares[i];
+                        break;
+                    }
                 }
                 if (squares[i].hasEnemy == true)
                 {
@@ -334,9 +415,32 @@ public class Enemy : MonoBehaviour {
                 {
                     //Add to list of possible movements, and has enemy, make priority for movement
 
-                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
-                    sqaureWithPlayer = squares[i];
-                    break;
+					if (squares[i].playerPiece.gameObject.tag == "King")
+                    {
+                        possibleMovementsWithKing.Add(squares[i].transform.position);
+                        squareWithKing = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Rook")
+                    {
+                        possibleMovementsWithRook.Add(squares[i].transform.position);
+                        squareWithRook = squares[i];
+                        break;
+                    }
+
+
+                    else if (squares[i].playerPiece.gameObject.tag == "Bishop")
+                    {
+                        possibleMovementsWithBishop.Add(squares[i].transform.position);
+                        squareWithBishop = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Pawn")
+                    {
+                        possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                        sqaureWithPlayer = squares[i];
+                        break;
+                    }
                 }
                 if (squares[i].hasEnemy == true)
                 {
@@ -365,9 +469,32 @@ public class Enemy : MonoBehaviour {
                 if (squares[i].hasPiece == true)
                 {
                     //Add to list of possible movements, and has enemy, make priority for movement
-                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
-                    sqaureWithPlayer = squares[i];
-                    break;
+					if (squares[i].playerPiece.gameObject.tag == "King")
+                    {
+                        possibleMovementsWithKing.Add(squares[i].transform.position);
+                        squareWithKing = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Rook")
+                    {
+                        possibleMovementsWithRook.Add(squares[i].transform.position);
+                        squareWithRook = squares[i];
+                        break;
+                    }
+
+
+                    else if (squares[i].playerPiece.gameObject.tag == "Bishop")
+                    {
+                        possibleMovementsWithBishop.Add(squares[i].transform.position);
+                        squareWithBishop = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Pawn")
+                    {
+                        possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                        sqaureWithPlayer = squares[i];
+                        break;
+                    }
                 }
                 if (squares[i].hasEnemy == true)
                 {
@@ -396,9 +523,32 @@ public class Enemy : MonoBehaviour {
                 //print(squares[i].gameObject.name + " " + squares[i].hasEnemy);
                 if (squares[i].hasPiece == true)
                 {
-                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
-                    sqaureWithPlayer = squares[i];
-                    break;
+					if (squares[i].playerPiece.gameObject.tag == "King")
+                    {
+                        possibleMovementsWithKing.Add(squares[i].transform.position);
+                        squareWithKing = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Rook")
+                    {
+                        possibleMovementsWithRook.Add(squares[i].transform.position);
+                        squareWithRook = squares[i];
+                        break;
+                    }
+
+
+                    else if (squares[i].playerPiece.gameObject.tag == "Bishop")
+                    {
+                        possibleMovementsWithBishop.Add(squares[i].transform.position);
+                        squareWithBishop = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Pawn")
+                    {
+                        possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                        sqaureWithPlayer = squares[i];
+                        break;
+                    }
 
                 }
 
@@ -432,9 +582,32 @@ public class Enemy : MonoBehaviour {
                 if (squares[i].hasPiece == true)
                 {
                     //Add to list of possible movements, and has enemy, make priority for movement
-                    possibleMovemenstWithEnemy.Add(squares[i].transform.position);
-                    sqaureWithPlayer = squares[i];
-                    break;
+					if (squares[i].playerPiece.gameObject.tag == "King")
+                    {
+                        possibleMovementsWithKing.Add(squares[i].transform.position);
+                        squareWithKing = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Rook")
+                    {
+                        possibleMovementsWithRook.Add(squares[i].transform.position);
+                        squareWithRook = squares[i];
+                        break;
+                    }
+
+
+                    else if (squares[i].playerPiece.gameObject.tag == "Bishop")
+                    {
+                        possibleMovementsWithBishop.Add(squares[i].transform.position);
+                        squareWithBishop = squares[i];
+                        break;
+                    }
+                    else if (squares[i].playerPiece.gameObject.tag == "Pawn")
+                    {
+                        possibleMovemenstWithEnemy.Add(squares[i].transform.position);
+                        sqaureWithPlayer = squares[i];
+                        break;
+                    }
                 }
                 if (squares[i].hasEnemy == true)
                 {
@@ -452,6 +625,123 @@ public class Enemy : MonoBehaviour {
         }
 
 
+
+	}
+
+
+	void AttackPawn(){
+		print(gameObject.name + " Attacks Pawn on " + sqaureWithPlayer + " From " + thisSquare + " with a possible " + possibleMovemenstWithEnemy.Count + " moves with enemy");
+
+        if (sqaureWithPlayer.playerPiece != null)
+        {
+            Destroy(sqaureWithPlayer.playerPiece.gameObject);
+        }
+        else
+        {
+            //eAI.EnemyTurn();
+            print("Weird Thing Happened " + sqaureWithPlayer);
+        }
+
+		//Move The Piece
+		//int randSpace = Random.Range(0, possibleMovemenstWithEnemy.Count);
+		transPos = sqaureWithPlayer.transform.position;
+        transform.position = transPos;
+
+
+        GameManager.turnNum++;
+        Invoke("StartPlayerTurn", 0.5f);
+        possibleMovemenstWithEnemy.Clear();
+		possibleMovementsWithBishop.Clear();
+		possibleMovementsWithRook.Clear();
+		possibleMovementsWithKing.Clear();
+        possibleMovements.Clear();
+
+	}
+
+	void AttackBishop(){
+		print(gameObject.name + " Attacks Bishop on " + squareWithBishop + " From " + thisSquare + " with a possible " + possibleMovementsWithBishop.Count + " moves with enemy");
+
+		if (squareWithBishop.playerPiece != null)
+        {
+			Destroy(squareWithBishop.playerPiece.gameObject);
+        }
+        else
+        {
+            //eAI.EnemyTurn();
+			print("Weird Thing Happened " + squareWithBishop);
+        }
+
+		//Move The Piece
+		//int randSpace = Random.Range(0, possibleMovementsWithBishop.Count);
+		transPos = squareWithBishop.transform.position;
+        transform.position = transPos;
+
+
+        GameManager.turnNum++;
+        Invoke("StartPlayerTurn", 0.5f);
+		possibleMovemenstWithEnemy.Clear();
+        possibleMovementsWithBishop.Clear();
+        possibleMovementsWithRook.Clear();
+        possibleMovementsWithKing.Clear();
+        possibleMovements.Clear();
+       
+	}
+
+	void AttackRook(){
+		print(gameObject.name + " Attacks Rook on " + squareWithRook + " From " + thisSquare + " with a possible " + possibleMovementsWithRook.Count + " moves with enemy");
+
+		if (squareWithRook.playerPiece != null)
+        {
+            Destroy(squareWithRook.playerPiece.gameObject);
+        }
+        else
+        {
+            //eAI.EnemyTurn();
+			print("Weird Thing Happened " + squareWithRook);
+        }
+
+		//Move The Piece
+		//int randSpace = Random.Range(0, possibleMovementsWithRook.Count);
+		transPos = squareWithRook.transform.position;
+        transform.position = transPos;
+
+
+        GameManager.turnNum++;
+        Invoke("StartPlayerTurn", 0.5f);
+        possibleMovemenstWithEnemy.Clear();
+        possibleMovementsWithBishop.Clear();
+        possibleMovementsWithRook.Clear();
+        possibleMovementsWithKing.Clear();
+        possibleMovements.Clear();
+
+	}
+
+	void AttackKing(){
+		print(gameObject.name + " Attacks King on " + squareWithKing + " From " + thisSquare + " with a possible " + possibleMovementsWithKing.Count + " moves with enemy");
+
+		if (squareWithKing.playerPiece != null)
+        {
+			Destroy(squareWithKing.playerPiece.gameObject);
+        }
+        else
+        {
+            //eAI.EnemyTurn();
+            print("Weird Thing Happened " + squareWithKing);
+        }
+
+		//Move The Piece
+		//int randSpace = Random.Range(0, possibleMovementsWithKing.Count);
+		transPos = squareWithKing.transform.position;
+        transform.position = transPos;
+
+
+        GameManager.turnNum++;
+        Invoke("StartPlayerTurn", 0.5f);
+        possibleMovemenstWithEnemy.Clear();
+        possibleMovementsWithBishop.Clear();
+        possibleMovementsWithRook.Clear();
+        possibleMovementsWithKing.Clear();
+        possibleMovements.Clear();
 
 	}
 

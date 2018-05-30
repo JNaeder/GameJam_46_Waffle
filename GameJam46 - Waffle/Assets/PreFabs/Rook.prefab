@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 95501426359099096}
   m_Layer: 0
   m_Name: Rook
-  m_TagString: Untagged
+  m_TagString: Rook
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -167,6 +167,7 @@ MonoBehaviour:
   maxDist: 10
   isStraight: 1
   isDiagonal: 0
+  weight: 3
 --- !u!212 &212002806790817198
 SpriteRenderer:
   m_ObjectHideFlags: 1

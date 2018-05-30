@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
 
 	public bool isChoosingPiece, isMovingPiece;
     public static int turnNum;
-	public Text turnNumText;
 
     EnemyAI eAI;
+	bool gameOver;
+	public static int playerKingNum, enemyKingNum, enemyScore;
 
+	public GameObject winScreen, loseScreen;
 
 
 	// Use this for initialization
@@ -22,16 +25,15 @@ public class GameManager : MonoBehaviour {
         PlayerTurn();
 	}
 
-	private void Update()
-	{
-		turnNumText.text = "Turn: " + turnNum.ToString();
-	}
-
 
 	public void PlayerTurn() {
         //print("It is Player Turn number " + turnNum);
         ClearEverythingAndLookForEverything();
-		Invoke("ResetIsChoosing", 0.5f);
+		CheckForWinOrLose();
+		if (!gameOver)
+		{
+			Invoke("ResetIsChoosing", 0.5f);
+		}
 
         
 
@@ -42,7 +44,13 @@ public class GameManager : MonoBehaviour {
     public void EnemyTurn() {
         //print("It is enemy turn number " + turnNum);
         ClearEverythingAndLookForEverything();
-        eAI.EnemyTurn();
+		CheckForWinOrLose();
+		CheckEnemyScore();
+		print("Enemy Power is " + enemyScore);
+		if (!gameOver)
+		{
+			eAI.EnemyTurn();
+		}
         
     }
 
@@ -96,4 +104,68 @@ public class GameManager : MonoBehaviour {
 
 
     }
+
+
+    
+	void CheckForWinOrLose(){
+		enemyKingNum = 0;
+		playerKingNum = 0;
+
+		Enemy[] enemies = FindObjectsOfType<Enemy>();
+		Piece_Control[] players = FindObjectsOfType<Piece_Control>();
+        
+		foreach(Enemy e in enemies){
+			if(e.gameObject.tag == "King"){
+				enemyKingNum++;
+			}
+		}
+
+		foreach(Piece_Control p in players){
+			if(p.gameObject.tag == "King"){
+				playerKingNum++;
+			}
+
+		}
+
+		//print("Player King Number is " + playerKingNum + " Enemy King Number Is " + enemyKingNum);
+		if(enemyKingNum == 0){
+			print("Win!");
+			gameOver = true;
+			winScreen.SetActive(true);
+
+		} else if(playerKingNum == 0){
+			print("Lose");
+			gameOver = true;
+			loseScreen.SetActive(true);
+		}
+        
+
+
+
+	}
+
+	void CheckEnemyScore(){
+		Enemy[] enemies = FindObjectsOfType<Enemy>();
+		enemyScore = 0;
+		foreach (Enemy e in enemies){
+			enemyScore += e.weight;
+
+		}
+
+
+
+	}
+
+
+	public void RestartGame(){
+		SceneManager.LoadScene(1);
+
+	}
+
+
+	public void QuitGame(){
+		print("Quit Game");
+		Application.Quit();
+
+	}
 }
