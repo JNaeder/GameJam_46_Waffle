@@ -85,7 +85,6 @@ public class Enemy : MonoBehaviour {
 
 
         Vector3 transPos = transform.position;
-        FindPossibleSpaces();
 
 
         if (possibleMovemenstWithEnemy.Count != 0) {
@@ -202,6 +201,7 @@ public class Enemy : MonoBehaviour {
                 else
                 {
                     //Add to list of possible, low priority
+                    print("Find Space");
                     possibleMovements.Add(squares[i].transform.position);
                     yUpNum += 2;
                     i = 0;
@@ -234,6 +234,7 @@ public class Enemy : MonoBehaviour {
                 else
                 {
                     //Add to list of possible, low priority
+                    print("Find Space");
                     possibleMovements.Add(squares[i].transform.position);
                     yDownNum += 2;
                     i = 0;
@@ -268,6 +269,7 @@ public class Enemy : MonoBehaviour {
                 else
                 {
                     //Add to list of possible, low priority
+                    print("Find Space");
                     possibleMovements.Add(squares[i].transform.position);
                     xUpNum += 2;
                     i = 0;
@@ -300,6 +302,7 @@ public class Enemy : MonoBehaviour {
                 else
                 {
                     //Add to list of possible, low priority
+                    print("Find Space");
                     possibleMovements.Add(squares[i].transform.position);
                     xDownNum += 2;
                     i = 0;
