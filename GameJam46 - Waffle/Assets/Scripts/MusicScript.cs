@@ -4,5 +4,8 @@ using UnityEngine;
 
 public class MusicScript : MonoBehaviour {
 
-
+    private void Start()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
 }

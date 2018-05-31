@@ -131,13 +131,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7815e7814e0f0e9479ff467d0bd87475, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxDist: 10
+  maxDist: 3
   isStraight: 1
   isDiagonal: 1
   weight: 4
   possibleMovements: []
   possibleMovemenstWithEnemy: []
+  possibleMovementsWithBishop: []
+  possibleMovementsWithRook: []
+  possibleMovementsWithKing: []
   sqaureWithPlayer: {fileID: 0}
+  squareWithBishop: {fileID: 0}
+  squareWithRook: {fileID: 0}
+  squareWithKing: {fileID: 0}
 --- !u!212 &212443833383742662
 SpriteRenderer:
   m_ObjectHideFlags: 1
